@@ -23,7 +23,7 @@ def create_question(conn, question):
     :return: question id
     """
     cur = conn.cursor()
-    
+
     try:
         # start transaction
         cur.execute("begin")
@@ -41,5 +41,10 @@ def create_question(conn, question):
         #in case of exception, roolback the transaction
         cur.execute('rollback')
 
+
 def formatStr(string : str):
+    """ format string for database insertion 
+    :param string: value as string
+    :return: formated string
+    """
     return string.replace("'", "''")
