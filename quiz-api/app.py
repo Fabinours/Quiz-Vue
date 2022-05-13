@@ -1,14 +1,15 @@
 from flask import Flask, request
-from jwt_utils import *
-from questions import *
+
+from services.auth import AuthService
+from entities.questions import QuestionEntity
 from database import *
+from json import dumps
 
 app = Flask(__name__)
 
 @app.route('/')
 def hello_world():
-	x = 'world'
-	return f"Hello, {x}"
+	return "Hello, world"
 
 @app.route('/quiz-info', methods=['GET'])
 def GetQuizInfo():
@@ -17,35 +18,78 @@ def GetQuizInfo():
 @app.route('/login', methods=['POST'])
 def Login():
 	payload = request.get_json()
-	#Verify password in payload
-	if(payload["password"] == "Vive l'ESIEE !"):
-		return {"token": build_token()}, 200
-	else:
-		return '', 401
+	return AuthService().buildToken(payload["password"])
+	
+@app.route('/questions/<id>', methods=['GET'])
+def GetQuestion(id):
+
+	#Ajouter la question à la base de données
+	db = Database()
+
+	#Création de la question
+	if QuestionEntity.exists(db, id):
+		json = QuestionEntity.get(db, id).toJson()
+		
+		db.close()
+		return json, 200
+
+	#La position est déjà utilisée
+	db.close()
+	return 'The question does not exists!', 400
+
+@app.route('/questions', methods=['GET'])
+def GetAllQuestions():
+
+	#Ajouter la question à la base de données
+	db = Database()
+
+	#Création de la question
+	questions_data = QuestionEntity.getAll(db)
+	questions_data = list(map(lambda obj: obj.toJson(), questions_data))
+	json = dumps(questions_data)
+	
+	db.close()
+	return json, 200
 	
 @app.route('/questions', methods=['POST'])
 def CreateQuestion():
-	#Récupérer le token envoyé en paramètre
-	token = request.headers.get('Authorization').split(' ')[1]
-	try:
-		#Vérifier que le token est valide
-		decode_token(token)
 
-		#Récupérer les données envoyées
-		payload = request.get_json()
-		question = Question(payload["title"], payload["text"], payload["image"])
+	if not AuthService().isAuthentificated():
+		return '', 401
 
-		#Ajouter la question à la base de données
-		conn = create_connection()
-		result = create_question(conn, question)
-		conn.close()
+	#Récupérer les données envoyées
+	payload = request.get_json()
 
-		print(result)
+	#Ajouter la question à la base de données
+	db = Database()
 
-		#Retourner la réponse
+	#Création de la question
+	if not(QuestionEntity.positionExists(db, payload["position"])):
+		QuestionEntity(payload["title"], payload["text"], payload["image"], payload["position"]).create(db)
+		db.close()
 		return '', 200
-	except BaseException as err:
-		return f'{err}', 401
+
+	#La position est déjà utilisée
+	db.close()
+	return 'The question position is already used!', 401
+
+@app.route('/questions/<id>', methods=['DELETE'])
+def DeleteQuestion(id):
+	
+	if not AuthService().isAuthentificated():
+		return '', 401
+
+	#Supprimer la question de la base de données
+	db = Database()
+
+	if QuestionEntity.exists(db, id):
+		QuestionEntity.delete(db, id)
+		db.close()
+		return '', 204
+
+	#Retourner la réponse
+	db.close()
+	return '', 401
 
 if __name__ == "__main__":
-    app.run(ssl_context='adhoc')
+    app.run(ssl_context='adhoc', use_reloader=True, debug=True)

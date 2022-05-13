@@ -1,50 +1,29 @@
 import sqlite3
 
-def create_connection():
-    """ create a database connection to the SQLite database
-        specified by db_file
-    :param db_file: database file
-    :return: Connection object or None
-    """
-    try:
+class Database:
+
+    def __init__(self):
+        self.__conn = self.__create__connection()
+
+    def __create__connection(self):
+        """ create a database connection to the SQLite database
+            specified by db_file
+        :param db_file: database file
+        :return: Connection object or None
+        """
         conn = sqlite3.connect("../quiz-app-database.db")
         conn.isolation_level = None
         return conn
-    except BaseException as e:
-        print(e)
 
-    return None
+    def getCursor(self):
+        return self.__conn.cursor()
 
-def create_question(conn, question):
-    """
-    Create a new question into the questions table
-    :param conn:
-    :param question:
-    :return: question id
-    """
-    cur = conn.cursor()
+    def close(self):
+        self.__conn.close()
 
-    try:
-        # start transaction
-        cur.execute("begin")
-
-        insertion_result = cur.execute(
-            f"INSERT INTO Question (Title, Text, Image) VALUES"
-            f"('{formatStr(question.title)}', '{formatStr(question.text)}', '{question.image}')"
-        )
-
-        #send the request
-        cur.execute("commit")
-
-        return cur.lastrowid
-    except BaseException as e:
-        #in case of exception, roolback the transaction
-        cur.execute('rollback')
-
-
-def formatStr(string : str):
-    """ format string for database insertion 
-    :param string: value as string
-    :return: formated string
-    """
-    return string.replace("'", "''")
+    def formatStr(self, string : str):
+        """ format string for database insertion 
+        :param string: value as string
+        :return: formated string
+        """
+        return str(string).replace("'", "''").replace('"', '""')
