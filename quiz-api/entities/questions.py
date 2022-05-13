@@ -19,11 +19,19 @@ class QuestionEntity():
         :param db:
         :return: question id
         """
-        cur = db.getCursor()
+
+        if not(self.position in self.__getPossiblePositions(db)):
+            return None
 
         try:
+            cur = db.getCursor()
+
             # start transaction
             cur.execute("begin")
+
+            # update indexes
+            cur.execute(f"UPDATE Question SET Position = Position + 1 WHERE Position >= {self.position}")
+
             # add question
             cur.execute(f"INSERT INTO Question (Title, Text, Image, Position) VALUES ('{db.formatStr(self.title)}', '{db.formatStr(self.text)}', '{self.image}', '{self.position}')")
 
@@ -35,17 +43,63 @@ class QuestionEntity():
         except Exception as e:
             #in case of exception, roolback the transaction
             cur.execute('rollback')
+            return None
 
-    @staticmethod
-    def positionExists(db : Database, questionId : int):
+    def update(self, db : Database, questionId : int):
         """
-        Verify if the question position is already used
+        Update the question related to the position
         :param db:
-        :return: true if exists, false else
+        :return: None
         """
-        cur = db.getCursor()
-        cur.execute(f"SELECT Id FROM Question WHERE Position = {questionId}")
-        return len(cur.fetchall()) != 0
+
+        interval = self.__getPossiblePositions(db)
+        interval[1] -= 1
+
+        if not(self.position in interval):
+            return False
+
+        initialPosition = QuestionEntity.get(db, questionId).position
+        finalPosition = self.position
+
+        try:
+
+            cur = db.getCursor()
+
+            # start transaction
+            cur.execute("begin")
+
+            # update indexes
+            cur.execute(f"UPDATE Question SET Position = -1 WHERE Id = {questionId}")
+            cur.execute(f"UPDATE Question SET Position = {initialPosition} WHERE Position == {finalPosition}")
+            cur.execute(f"UPDATE Question SET Position = {finalPosition} WHERE Id == {questionId}")
+
+            # add question
+            cur.execute(
+                f"UPDATE Question SET "
+                f" Title     = '{db.formatStr(self.title)}', "
+                f" Text      = '{db.formatStr(self.text)}', "
+                f" Image     = '{self.image}', "
+                f" Position  = {self.position} "
+                f" WHERE Id = {questionId} "
+            )
+
+            #send the request
+            cur.execute("commit")
+
+            return True
+
+        except Exception as e:
+            # in case of exception, roolback the transaction
+            cur.execute('rollback')
+
+    def __getPossiblePositions(self, db : Database):
+
+        data = self.getAll(db)
+
+        if not data:
+            return [1, 1]
+
+        return [ 1, len(data) + 1 ]
 
     @staticmethod
     def exists(db : Database, questionId : int):
@@ -72,8 +126,13 @@ class QuestionEntity():
             # start transaction
             cur.execute("begin")
 
+            position = QuestionEntity.get(db, questionId).position
+
             # add question
-            cur.execute(f"DELETE Question WHERE Id={questionId}")
+            cur.execute(f"DELETE FROM Question WHERE Id = {questionId}")
+
+            # update indexes
+            cur.execute(f"UPDATE Question SET Position = Position - 1 WHERE Position >= {position}")
 
             #send the request
             cur.execute("commit")
@@ -134,4 +193,4 @@ class QuestionEntity():
     
     @staticmethod
     def fromJson(json):
-        return Question(json["title"], json["text"], json["image"], json["position"])
+        return QuestionEntity(json["title"], json["text"], json["image"], json["position"])
