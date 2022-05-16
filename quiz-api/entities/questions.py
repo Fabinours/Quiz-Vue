@@ -117,12 +117,24 @@ class QuestionEntity():
 
             # start transaction
             cur.execute("begin")
-            print("1")
-            # update indexes
-            cur.execute(f"UPDATE Question SET Position = -1 WHERE Position = {initialPosition}")
-            cur.execute(f"UPDATE Question SET Position = {initialPosition} WHERE Position = {finalPosition}")
-            cur.execute(f"UPDATE Question SET Position = {finalPosition} WHERE Position = -1")
-            print("2")
+
+            if(initialPosition > finalPosition):
+                #store initial question at position 0 temporarily
+                cur.execute(f"UPDATE Question SET Position = 0 WHERE Position = {initialPosition}")
+                #increment positions
+                cur.execute(f"UPDATE Question SET Position = - (Position + 1) WHERE Position < {initialPosition} AND Position >= {finalPosition} AND Position != 0")
+                cur.execute(f"UPDATE Question SET Position = - Position WHERE Position < 0")
+                #update initial question to final position
+                cur.execute(f"UPDATE Question SET Position = {finalPosition} WHERE Position == 0")
+            if(initialPosition < finalPosition):
+                 #store initial question at position 0 temporarily
+                cur.execute(f"UPDATE Question SET Position = 0 WHERE Position = {initialPosition}")
+                #decrement positions
+                cur.execute(f"UPDATE Question SET Position = - (Position - 1) WHERE Position > {initialPosition} AND Position <= {finalPosition}")
+                cur.execute(f"UPDATE Question SET Position = - Position WHERE Position < 0")
+                #update initial question to final position
+                cur.execute(f"UPDATE Question SET Position = {finalPosition} WHERE Position == 0")
+
             # add question
             cur.execute(
                 f"UPDATE Question SET "
@@ -131,14 +143,13 @@ class QuestionEntity():
                 f" Image     = '{self.image}' "
                 f" WHERE Position = {finalPosition} "
             )
-            print("3")
+            
             #send the request
             cur.execute("commit")
 
             return True
 
         except Exception as e:
-            print(e)
             # in case of exception, roolback the transaction
             cur.execute('rollback')
 
@@ -184,6 +195,36 @@ class QuestionEntity():
             # update indexes
             cur.execute(f"UPDATE Question SET Position = Position - 1 WHERE Position >= {position}")
 
+            #send the request
+            cur.execute("commit")
+
+            return cur.lastrowid
+
+        except Exception as e:
+            #in case of exception, roolback the transaction
+            cur.execute('rollback')
+
+    @staticmethod
+    def deleteByPosition(db : Database, position : int):
+        """
+        Delete a question into the questions table
+        :param db:
+        :param position
+        :return: None
+        """
+        cur = db.getCursor()
+
+        try:
+            # start transaction
+            cur.execute("begin")
+            
+            # delete question
+            cur.execute(f"DELETE FROM Question WHERE Position = {position}")
+            
+            # decrement positions
+            cur.execute(f"UPDATE Question SET Position = - (Position - 1) WHERE Position >= {position}")
+            cur.execute(f"UPDATE Question SET Position = - Position WHERE Position < 0")
+            
             #send the request
             cur.execute("commit")
 

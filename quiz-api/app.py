@@ -101,8 +101,8 @@ def UpdateQuestion(position):
 	db.close()
 	return 'Question does not exists', 404
 
-@app.route('/questions/<id>', methods=['DELETE'])
-def DeleteQuestion(id):
+@app.route('/questions/<position>', methods=['DELETE'])
+def DeleteQuestion(position):
 	
 	if not AuthService().isAuthentificated():
 		return '', 401
@@ -110,8 +110,8 @@ def DeleteQuestion(id):
 	#Supprimer la question de la base de données
 	db = Database()
 
-	if QuestionEntity.exists(db, id):
-		QuestionEntity.delete(db, id)
+	if QuestionEntity.getByPosition(db, position):
+		QuestionEntity.deleteByPosition(db, position)
 		db.close()
 		return '', 204
 
