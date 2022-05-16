@@ -29,8 +29,9 @@ class QuestionEntity():
             # start transaction
             cur.execute("begin")
 
-            # update indexes
-            cur.execute(f"UPDATE Question SET Position = Position + 1 WHERE Position >= {self.position}")
+            # increment indexes
+            cur.execute(f"UPDATE Question SET Position = - (Position + 1) WHERE Position >= {self.position}")
+            cur.execute(f"UPDATE Question SET Position = - Position WHERE Position < 0")
 
             # add question
             cur.execute(f"INSERT INTO Question (Title, Text, Image, Position) VALUES ('{db.formatStr(self.title)}', '{db.formatStr(self.text)}', '{self.image}', '{self.position}')")
@@ -47,13 +48,13 @@ class QuestionEntity():
 
     def update(self, db : Database, questionId : int):
         """
-        Update the question related to the position
+        Update the question related to the questionId
         :param db:
         :return: None
         """
 
         interval = self.__getPossiblePositions(db)
-        interval[1] -= 1
+        interval[-1] -= 1
 
         if not(self.position in interval):
             return False
@@ -92,14 +93,63 @@ class QuestionEntity():
             # in case of exception, roolback the transaction
             cur.execute('rollback')
 
+    def updateByPosition(self, db : Database, position : int):
+        """
+        Update the question related to the questionId
+        :param db:
+        :return: None
+        """
+
+        interval = self.__getPossiblePositions(db)
+        interval[-1] -= 1
+
+        if not(self.position in interval):
+            print("Position not in interval")
+            return False
+
+        question = QuestionEntity.getByPosition(db, position)
+        initialPosition = question.position
+        finalPosition = self.position
+
+        try:
+
+            cur = db.getCursor()
+
+            # start transaction
+            cur.execute("begin")
+            print("1")
+            # update indexes
+            cur.execute(f"UPDATE Question SET Position = -1 WHERE Position = {initialPosition}")
+            cur.execute(f"UPDATE Question SET Position = {initialPosition} WHERE Position = {finalPosition}")
+            cur.execute(f"UPDATE Question SET Position = {finalPosition} WHERE Position = -1")
+            print("2")
+            # add question
+            cur.execute(
+                f"UPDATE Question SET "
+                f" Title     = '{db.formatStr(self.title)}', "
+                f" Text      = '{db.formatStr(self.text)}', "
+                f" Image     = '{self.image}' "
+                f" WHERE Position = {finalPosition} "
+            )
+            print("3")
+            #send the request
+            cur.execute("commit")
+
+            return True
+
+        except Exception as e:
+            print(e)
+            # in case of exception, roolback the transaction
+            cur.execute('rollback')
+
     def __getPossiblePositions(self, db : Database):
 
         data = self.getAll(db)
 
         if not data:
-            return [1, 1]
+            return [1]
 
-        return [ 1, len(data) + 1 ]
+        return list(range(1, len(data) + 2))
 
     @staticmethod
     def exists(db : Database, questionId : int):
@@ -162,6 +212,27 @@ class QuestionEntity():
             return None
 
         return QuestionEntity(question_data[0], question_data[1], question_data[2], question_data[3])
+
+    @staticmethod
+    def getByPosition(db : Database, position : int):
+        """
+        Get question from position
+        :param db:
+        :param position
+        :return: Question/None
+        """
+        cur = db.getCursor()
+        # add question
+        cur.execute(f"SELECT Title, Text, Image, Position from Question WHERE Position={position}") 
+
+        # build the question
+        question_data = cur.fetchone()
+
+        if not question_data:
+            return None
+
+        return QuestionEntity(question_data[0], question_data[1], question_data[2], question_data[3])
+
 
     @staticmethod
     def getAll(db : Database):

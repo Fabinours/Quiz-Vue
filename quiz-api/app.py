@@ -20,15 +20,16 @@ def Login():
 	payload = request.get_json()
 	return AuthService().buildToken(payload["password"])
 	
-@app.route('/questions/<id>', methods=['GET'])
-def GetQuestion(id):
+@app.route('/questions/<position>', methods=['GET'])
+def GetQuestion(position):
 
 	#Ajouter la question à la base de données
 	db = Database()
 
 	#Création de la question
-	if QuestionEntity.exists(db, id):
-		json = QuestionEntity.get(db, id).toJson()
+	question = QuestionEntity.getByPosition(db, position)
+	if question:
+		json = question.toJson()
 		
 		db.close()
 		return json, 200
@@ -69,12 +70,12 @@ def CreateQuestion():
 	if created:
 		db.close()
 		return str(created), 200
-
+		
 	db.close()
 	return 'Invalid position', 404
 
-@app.route('/questions/<id>', methods=['PUT'])
-def UpdateQuestion(id):
+@app.route('/questions/<position>', methods=['PUT'])
+def UpdateQuestion(position):
 	
 	if not AuthService().isAuthentificated():
 		return '', 401
@@ -85,9 +86,9 @@ def UpdateQuestion(id):
 	#Supprimer la question de la base de données
 	db = Database()
 
-	if QuestionEntity.exists(db, id):
+	if QuestionEntity.getByPosition(db, position):
 		question = QuestionEntity(payload["title"], payload["text"], payload["image"], payload["position"])
-		updated = question.update(db, id)
+		updated = question.updateByPosition(db, position)
 
 		if updated:
 			db.close()
