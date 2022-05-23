@@ -1,0 +1,20 @@
+DROP TABLE IF EXISTS "Answer";
+DROP TABLE IF EXISTS "Question";
+
+CREATE TABLE IF NOT EXISTS "Question" (
+	"Id"	INTEGER,
+	"Position"	INTEGER UNIQUE,
+	"Title"	TEXT,
+	"Text"	TEXT,
+	"Image"	TEXT,
+	PRIMARY KEY("Id" AUTOINCREMENT)
+);
+
+CREATE TABLE IF NOT EXISTS "Answer" (
+	"Id"	INTEGER,
+	"QuestionId" INTEGER,
+	"Text"	TEXT,
+	"IsCorrect"	INTEGER,
+	FOREIGN KEY("QuestionId") REFERENCES "Question"("Id") ON DELETE CASCADE,
+	PRIMARY KEY("Id" AUTOINCREMENT)
+);

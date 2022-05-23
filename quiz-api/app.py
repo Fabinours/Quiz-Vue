@@ -1,4 +1,5 @@
 from flask import Flask, request
+from entities.answers import AnswerEntity
 
 from services.auth import AuthService
 from entities.questions import QuestionEntity
@@ -56,7 +57,7 @@ def GetAllQuestions():
 def CreateQuestion():
 
 	if not AuthService().isAuthentificated():
-		return '', 401
+		return 'Bad auth', 401
 
 	#Récupérer les données envoyées
 	payload = request.get_json()
@@ -65,8 +66,12 @@ def CreateQuestion():
 	db = Database()
 	
 	#Création de la question
-	created = QuestionEntity(payload["title"], payload["text"], payload["image"], payload["position"]).create(db)
-
+	questionEntity = QuestionEntity(payload["title"], payload["text"], payload["image"], payload["position"])
+	possibleAnswers = list(map(lambda json: AnswerEntity.fromJson(json), payload["possibleAnswers"]))
+	questionEntity.setPossibleAnswers(possibleAnswers)
+	
+	created = questionEntity.create(db)
+	
 	if created:
 		db.close()
 		return str(created), 200
@@ -78,7 +83,7 @@ def CreateQuestion():
 def UpdateQuestion(position):
 	
 	if not AuthService().isAuthentificated():
-		return '', 401
+		return 'Bad auth', 401
 
 	#Récupérer les données envoyées
 	payload = request.get_json()
@@ -86,9 +91,15 @@ def UpdateQuestion(position):
 	#Supprimer la question de la base de données
 	db = Database()
 
-	if QuestionEntity.getByPosition(db, position):
-		question = QuestionEntity(payload["title"], payload["text"], payload["image"], payload["position"])
-		updated = question.updateByPosition(db, position)
+	questionEntity = QuestionEntity.getByPosition(db, position)
+	if questionEntity:
+
+		questionEntity.title, questionEntity.text = payload["title"], payload["text"]
+		questionEntity.image, questionEntity.position = payload["image"], payload["position"]
+		possibleAnswers = list(map(lambda json: AnswerEntity.fromJson(json), payload["possibleAnswers"]))
+		questionEntity.setPossibleAnswers(possibleAnswers)
+
+		updated = questionEntity.updateByPosition(db, position)
 
 		if updated:
 			db.close()
@@ -105,12 +116,12 @@ def UpdateQuestion(position):
 def DeleteQuestion(position):
 	
 	if not AuthService().isAuthentificated():
-		return '', 401
+		return 'Bad auth', 401
 
 	#Supprimer la question de la base de données
 	db = Database()
 
-	if QuestionEntity.getByPosition(db, position):
+	if QuestionEntity.getByPosition(db, position, False):
 		QuestionEntity.deleteByPosition(db, position)
 		db.close()
 		return '', 204
