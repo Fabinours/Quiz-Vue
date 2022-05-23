@@ -23,5 +23,6 @@ CREATE TABLE IF NOT EXISTS "Answer" (
 CREATE TABLE IF NOT EXISTS "Participation" (
 	"Id"	INTEGER,
 	"PlayerName"	TEXT,
+	"Score" 	INTEGER,
 	PRIMARY KEY("Id" AUTOINCREMENT)
 );

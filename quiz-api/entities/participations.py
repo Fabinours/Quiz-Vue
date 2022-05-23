@@ -1,12 +1,29 @@
 from database import Database
+from entities.questions import QuestionEntity
 
 # Exemple de création de classe en python
 class ParticipationEntity():
-    def __init__(self, playerName : str):
+    def __init__(self, playerName : str, score : int):
         self.playerName = playerName
+        self.score = score
+
+    @staticmethod
+    def getScore(db : Database, answers : list):
+
+        questions = QuestionEntity.getAll(db)
+
+        if len(questions) != len(answers):
+            return None
+
+        score = 0
+        for i in range(len(questions)):
+            if answers[i] - 1 in questions[i].getGoodAnswers():
+                score += 1
+
+        return score
 
     def __str__(self):
-        return f"{self.playerName}"
+        return f"{self.playerName} : {self.score}"
 
     # >> GETTERS << #
     def create(self, db : Database):
@@ -15,6 +32,10 @@ class ParticipationEntity():
         :param db:
         :return: participation id
         """
+
+        if self.score is None:
+            return False
+
         try:
 
             cur = db.getCursor()
@@ -23,7 +44,7 @@ class ParticipationEntity():
             cur.execute("begin")
 
             # add participation
-            cur.execute(f"INSERT INTO Participation (PlayerName) VALUES ('{db.formatStr(self.playerName)}')")
+            cur.execute(f"INSERT INTO Participation (PlayerName, Score) VALUES ('{db.formatStr(self.playerName)}', {self.score})")
 
             #send the request
             cur.execute("commit")
@@ -72,6 +93,18 @@ class ParticipationEntity():
         cur = db.getCursor()
 
         # add participation
-        cur.execute(f"SELECT PlayerName FROM Participation")
+        cur.execute(f"SELECT PlayerName, Score FROM Participation ORDER BY Score DESC")
 
-        return cur.fetchall()
+        participationsData = cur.fetchall()
+        return [ ParticipationEntity(participation[0], participation[1]) for participation in participationsData ]
+
+    # >> JSON << #
+    def toJson(self):
+        return {
+            "playerName": self.playerName,
+            "score": self.score
+        }
+    
+    @staticmethod
+    def fromJson(json):
+        return QuestionEntity(json["playerName"], json["score"])

@@ -19,7 +19,10 @@ def GetQuizInfo():
 	#Récupérer la base de données
 	db = Database()
 
-	return {"size": len(ParticipationEntity.getAll(db)), "scores": []}, 200
+	return {
+		"size": len(QuestionEntity.getAll(db)), 
+		"scores": list(map(lambda el : el.toJson(), ParticipationEntity.getAll(db)))
+	}, 200
 
 @app.route('/login', methods=['POST'])
 def Login():
@@ -52,12 +55,10 @@ def GetAllQuestions():
 	db = Database()
 
 	#Création de la question
-	questions_data = QuestionEntity.getAll(db)
-	questions_data = list(map(lambda obj: obj.toJson(), questions_data))
-	json = dumps(questions_data)
+	questions_data = list(map(lambda obj: obj.toJson(), QuestionEntity.getAll(db)))
 	
 	db.close()
-	return json, 200
+	return questions_data, 200
 	
 @app.route('/questions', methods=['POST'])
 def CreateQuestion():
@@ -146,15 +147,16 @@ def CreateParticipation():
 	db = Database()
 	
 	#Création de la question
-	questionEntity = ParticipationEntity(payload["playerName"]) # payload["answers"]
+	score = ParticipationEntity.getScore(db,  payload["answers"])
+	questionEntity = ParticipationEntity(payload["playerName"], score)
 	created = questionEntity.create(db)
 	
 	if created:
 		db.close()
-		return str(created), 200
+		return questionEntity.toJson(), 200
 		
 	db.close()
-	return 'Unable to create participation', 404
+	return 'Invalid answers number', 400
 
 @app.route('/participations', methods=['DELETE'])
 def DeleteAllParticipations():
@@ -167,7 +169,7 @@ def DeleteAllParticipations():
 	
 	if deleted:
 		db.close()
-		return str(deleted), 200
+		return str(deleted), 204
 		
 	db.close()
 	return 'Unable to delete all participations', 404

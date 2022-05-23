@@ -211,13 +211,13 @@ class QuestionEntity():
         """
         cur = db.getCursor()
         # add question
-        cur.execute(f"SELECT Title, Text, Image, Position from Question") 
+        cur.execute(f"SELECT Title, Text, Image, Position from Question ORDER BY Position ASC") 
 
         # build the question
         questions_data = cur.fetchall()
 
         if not questions_data:
-            return None
+            return []
 
         questionsEntities = []
         for question_data in questions_data:
@@ -227,6 +227,15 @@ class QuestionEntity():
             questionsEntities.append(questionEntity)
 
         return questionsEntities
+
+    def getGoodAnswers(self):
+
+        goodAnswers = []
+        for i in range(len(self.possibleAnswers)):
+            if self.possibleAnswers[i].isCorrect:
+                goodAnswers.append(i)
+        
+        return goodAnswers
 
     # >> JSON << #
     def toJson(self):
