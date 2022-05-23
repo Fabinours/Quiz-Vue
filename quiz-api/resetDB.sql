@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS "Participation";
 DROP TABLE IF EXISTS "Answer";
 DROP TABLE IF EXISTS "Question";
 
@@ -16,5 +17,11 @@ CREATE TABLE IF NOT EXISTS "Answer" (
 	"Text"	TEXT,
 	"IsCorrect"	INTEGER,
 	FOREIGN KEY("QuestionId") REFERENCES "Question"("Id") ON DELETE CASCADE,
+	PRIMARY KEY("Id" AUTOINCREMENT)
+);
+
+CREATE TABLE IF NOT EXISTS "Participation" (
+	"Id"	INTEGER,
+	"PlayerName"	TEXT,
 	PRIMARY KEY("Id" AUTOINCREMENT)
 );

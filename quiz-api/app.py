@@ -3,6 +3,7 @@ from entities.answers import AnswerEntity
 
 from services.auth import AuthService
 from entities.questions import QuestionEntity
+from entities.participations import ParticipationEntity
 from database import *
 from json import dumps
 
@@ -14,7 +15,10 @@ def hello_world():
 
 @app.route('/quiz-info', methods=['GET'])
 def GetQuizInfo():
-	return {"size": 0, "scores": []}, 200
+	#Récupérer la base de données
+	db = Database()
+
+	return {"size": len(ParticipationEntity.getAll(db)), "scores": []}, 200
 
 @app.route('/login', methods=['POST'])
 def Login():
@@ -129,6 +133,41 @@ def DeleteQuestion(position):
 	#Retourner la réponse
 	db.close()
 	return 'Question does not exits', 404 
+
+@app.route('/participations', methods=['POST'])
+def CreateParticipation():
+	#Récupérer les données envoyées
+	payload = request.get_json()
+
+	#Ajouter la question à la base de données
+	db = Database()
+	
+	#Création de la question
+	questionEntity = ParticipationEntity(payload["playerName"]) # payload["answers"]
+	created = questionEntity.create(db)
+	
+	if created:
+		db.close()
+		return str(created), 200
+		
+	db.close()
+	return 'Unable to create participation', 404
+
+@app.route('/participations', methods=['DELETE'])
+def DeleteAllParticipations():
+
+	#Récupérer la base de données
+	db = Database()
+	
+	#Création de la question
+	deleted = ParticipationEntity.deleteAll(db)
+	
+	if deleted:
+		db.close()
+		return str(deleted), 200
+		
+	db.close()
+	return 'Unable to delete all participations', 404
 
 if __name__ == "__main__":
     app.run(ssl_context='adhoc', use_reloader=True, debug=True)
