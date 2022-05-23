@@ -9,6 +9,7 @@ from json import dumps
 
 app = Flask(__name__)
 
+###> GENERAL <###
 @app.route('/')
 def hello_world():
 	return "Hello, world"
@@ -25,6 +26,7 @@ def Login():
 	payload = request.get_json()
 	return AuthService().buildToken(payload["password"])
 	
+###> QUESTION <###
 @app.route('/questions/<position>', methods=['GET'])
 def GetQuestion(position):
 
@@ -134,6 +136,7 @@ def DeleteQuestion(position):
 	db.close()
 	return 'Question does not exits', 404 
 
+###> PARTICIPATION <###
 @app.route('/participations', methods=['POST'])
 def CreateParticipation():
 	#Récupérer les données envoyées
