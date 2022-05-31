@@ -28,6 +28,26 @@ const router = createRouter({
       path: '/score',
       name: 'score',
       component: () => import('../views/ScoreView.vue')
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import('../views/LoginView.vue')
+    },
+    {
+      path: '/admin',
+      name: 'admin',
+      component: () => import('../views/Admin/AdminView.vue')
+    },
+    {
+      path: '/admin/question/create',
+      name: 'admin-question-create',
+      component: () => import('../views/Admin/CreateQuestionView.vue')
+    },
+    {
+      path: '/admin/question/edit/:position',
+      name: 'admin-question-edit',
+      component: () => import('../views/Admin/EditQuestionView.vue')
     }
   ]
 })

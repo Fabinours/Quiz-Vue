@@ -28,7 +28,6 @@ def GetQuizInfo():
 
 @app.route('/login', methods=['POST'])
 def Login():
-	print("login")
 	payload = request.get_json()
 	return AuthService().buildToken(payload["password"])
 	

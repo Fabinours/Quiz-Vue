@@ -1,4 +1,5 @@
 import axios from "axios";
+import ParticipationStorageService from "./ParticipationStorageService";
 
 const instance = axios.create({
   baseURL: `${import.meta.env.VITE_API_URL}`,
@@ -6,10 +7,12 @@ const instance = axios.create({
 });
 
 export default {
-  async call(method, resource, data = null, token = null) {
+  async call(method, resource, data = null) {
     var headers = {
       "Content-Type": "application/json",
     };
+    const token = ParticipationStorageService.getToken();
+    
     if (token != null) {
       headers.authorization = "Bearer " + token;
     }
@@ -25,13 +28,14 @@ export default {
       })
       .catch((error) => {
         console.error(error);
+        return { status: error.response.status, data: error.response.statusText };
       });
   },
   getQuizInfo() {
     return this.call("get", "quiz-info");
   },
-  login() {
-    return this.call("post", "login");
+  login(password) {
+    return this.call("post", "login", password);
   },
   getQuestion(position) {
     return this.call("get", `questions/${position}`);
@@ -39,11 +43,11 @@ export default {
   getAllQuestions() {
     return this.call("get", "questions");
   },
-  createQuestion() {
-    return this.call("post", "questions");
+  createQuestion(question) {
+    return this.call("post", "questions", question);
   },
-  updateQuestion(position) {
-    return this.call("put", `questions/${position}`);
+  updateQuestion(position, question) {
+    return this.call("put", `questions/${position}`, question);
   },
   deleteQuestion(position) {
     return this.call("delete", `questions/${position}`);

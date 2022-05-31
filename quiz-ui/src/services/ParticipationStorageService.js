@@ -1,6 +1,7 @@
 
 const PLAYER_NAME_KEY = 'playerName';
 const PLAYER_SCORE_KEY = 'playerScore';
+const TOKEN_KEY = 'token';
 
 export default {
   clear() {
@@ -17,5 +18,11 @@ export default {
   },
   getParticipationScore() {
     return window.localStorage.getItem(PLAYER_SCORE_KEY);
-  }
+  },
+  saveToken(token) {
+    window.localStorage.setItem(TOKEN_KEY, token);
+  },
+  getToken() {
+    return window.localStorage.getItem(TOKEN_KEY);
+  },
 };
