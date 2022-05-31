@@ -21,6 +21,7 @@
 
     </div>
     <button class="btn btn-primary" @click="updateQuestion">Mettre à jour la question</button>
+    <button class="btn btn-danger" @click="cancelUpdate">Annuler</button>
   </div>
 </template>
 
@@ -130,6 +131,9 @@ export default {
     },
     addAnswer() {
       this.possibleAnswers.push("");
+    },
+    cancelUpdate() {
+      this.$router.push('/admin/question/watch/' + this.position);
     }
   }
 }

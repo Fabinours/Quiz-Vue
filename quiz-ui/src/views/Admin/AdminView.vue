@@ -5,7 +5,7 @@
     <hr>
     <div>
       <div v-for="({ title, text },i) in questions" :key="i">
-        <router-link :to="'/admin/question/edit/' + (i + 1)">{{ title }} - {{ text }}</router-link>
+        <router-link :to="'/admin/question/watch/' + (i + 1)">{{ title }} - {{ text }}</router-link>
       </div>
     </div>
   </div>

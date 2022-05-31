@@ -2,6 +2,7 @@
   <div>
     <question-display
       :question="questions[index]"
+      :isAdmin="false"
       @answer-selected="answerSelected"
     />
   </div>

@@ -1,13 +1,15 @@
 <template>
   <div v-if="question">
     <p>{{ question.title }}</p>
-    <img v-if="question.image" :src="question.image" />
+    <img v-if="!isAdmin && question.image" :src="question.image" />
     <p>{{ question.text }}</p>
     <div 
-      v-for="({ text }, answerId) in question.possibleAnswers" 
+      v-for="({ text, isCorrect }, answerId) in question.possibleAnswers" 
       :key="answerId"
     >
-      <a @click="onPossibleAnswerClicked(answerId)"> {{ text }} </a>
+      <a @click="onPossibleAnswerClicked(answerId)" :class="isCorrect && isAdmin ? 'text-decoration-underline' : ''"> 
+        {{ text }} 
+      </a>
     </div>
   </div>
 </template>
@@ -17,6 +19,11 @@
 export default {
   name: "QuestionDisplay",
   props: {
+    isAdmin: {
+      type: Boolean,
+        required: true,
+        default: false
+    },
     question: {
       image: {
         type: String,

@@ -22,7 +22,11 @@ export default {
   saveToken(token) {
     window.localStorage.setItem(TOKEN_KEY, token);
   },
+  removeToken() {
+    window.localStorage.removeItem(TOKEN_KEY);
+  },
   getToken() {
-    return window.localStorage.getItem(TOKEN_KEY);
+    let token = window.localStorage.getItem(TOKEN_KEY);
+    return token ? token : null;
   },
 };

@@ -11,12 +11,40 @@ import { RouterLink, RouterView } from 'vue-router'
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
         <RouterLink to="/login">Login</RouterLink>
+        <RouterLink v-if="logged" to="/admin">Admin</RouterLink>
+        <button v-if="logged" class="btn btn-primary" @click="logOut">Déconnexion</button>
       </nav>
     </div>
   </header>
 
   <RouterView />
 </template>
+
+<script>
+
+import participationStorageService from "@/services/ParticipationStorageService";
+
+export default {
+  name: "App",
+  computed: {
+    logged() {
+      return participationStorageService.getToken() != null
+    },
+  },
+  methods: {
+    async logOut() {
+      await this.$swal.fire(
+        'Déconnexion',
+        'Vous avez été déconnecté !',
+        'success'
+      );
+      participationStorageService.removeToken();
+      this.$router.push("/");
+    }
+  }
+}
+</script>
+
 
 <style>
 @import '@/assets/base.css';

@@ -45,6 +45,11 @@ const router = createRouter({
       component: () => import('../views/Admin/CreateQuestionView.vue')
     },
     {
+      path: '/admin/question/watch/:position',
+      name: 'admin-question-watch',
+      component: () => import('../views/Admin/WatchQuestionView.vue')
+    },
+    {
       path: '/admin/question/edit/:position',
       name: 'admin-question-edit',
       component: () => import('../views/Admin/EditQuestionView.vue')
