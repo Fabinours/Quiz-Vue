@@ -1,4 +1,5 @@
 from flask import Flask, request
+from flask_cors import CORS
 from entities.answers import AnswerEntity
 
 from services.auth import AuthService
@@ -8,6 +9,7 @@ from database import *
 from json import dumps
 
 app = Flask(__name__)
+CORS(app)
 
 ###> GENERAL <###
 @app.route('/')
@@ -26,6 +28,7 @@ def GetQuizInfo():
 
 @app.route('/login', methods=['POST'])
 def Login():
+	print("login")
 	payload = request.get_json()
 	return AuthService().buildToken(payload["password"])
 	
@@ -175,4 +178,4 @@ def DeleteAllParticipations():
 	return 'Unable to delete all participations', 404
 
 if __name__ == "__main__":
-    app.run(ssl_context='adhoc', use_reloader=True, debug=True)
+    app.run(use_reloader=True, debug=True)

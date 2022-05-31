@@ -211,7 +211,7 @@ class QuestionEntity():
         """
         cur = db.getCursor()
         # add question
-        cur.execute(f"SELECT Title, Text, Image, Position from Question ORDER BY Position ASC") 
+        cur.execute(f"SELECT Title, Text, Image, Position FROM Question ORDER BY Position ASC") 
 
         # build the question
         questions_data = cur.fetchall()
