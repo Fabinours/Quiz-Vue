@@ -61,7 +61,7 @@ def GetAllQuestions():
 	questions_data = list(map(lambda obj: obj.toJson(), QuestionEntity.getAll(db)))
 	
 	db.close()
-	return questions_data, 200
+	return { "questions" : questions_data }, 200
 	
 @app.route('/questions', methods=['POST'])
 def CreateQuestion():

@@ -4,7 +4,9 @@
 			"path": "."
 		}
 	],
-	"settings": {},
+	"settings": {
+		"nuxt.isNuxtApp": false
+	},
 	"launch": {
 		"version": "0.2.0",
 		"configurations": [
