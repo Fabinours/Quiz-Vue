@@ -23,6 +23,11 @@ const router = createRouter({
       path: '/questions',
       name: 'questions',
       component: () => import('../views/QuestionsManager.vue')
+    },
+    {
+      path: '/score',
+      name: 'score',
+      component: () => import('../views/ScoreView.vue')
     }
   ]
 })

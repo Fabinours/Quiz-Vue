@@ -48,8 +48,8 @@ export default {
   deleteQuestion(position) {
     return this.call("delete", `questions/${position}`);
   },
-  createParticipations() {
-    return this.call("post", "participations");
+  createParticipation(participation) {
+    return this.call("post", "participations", participation);
   },
   deleteAllParticipations() {
     return this.call("delete", "participations");
