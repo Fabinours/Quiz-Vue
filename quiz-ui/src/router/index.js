@@ -17,22 +17,22 @@ const router = createRouter({
     {
       path: '/quiz',
       name: 'quiz',
-      component: () => import('../views/NewQuizPage.vue')
+      component: () => import('../views/Quiz/NewQuizPage.vue')
     },
     {
       path: '/questions',
       name: 'questions',
-      component: () => import('../views/QuestionsManager.vue')
+      component: () => import('../views/Quiz/QuestionsManager.vue')
     },
     {
       path: '/score',
       name: 'score',
-      component: () => import('../views/ScoreView.vue')
+      component: () => import('../views/Quiz/ScoreView.vue')
     },
     {
       path: '/login',
       name: 'login',
-      component: () => import('../views/LoginView.vue')
+      component: () => import('../views/Admin/LoginView.vue')
     },
     {
       path: '/admin',

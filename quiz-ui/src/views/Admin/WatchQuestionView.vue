@@ -1,13 +1,11 @@
 <template>
   <div>
-    <h1>Watch Question View</h1>
-    <div>
-
-      <question-display :question="question" :isAdmin="true"/>
-
-    </div>
-    <button class="btn btn-primary" @click="editQuestion">Modifier</button>
-    <button class="btn btn-danger" @click="removeQuestion">Supprimer</button>
+    <question-display 
+      :question="question" 
+      :isAdmin="true"
+      @edit-question="editQuestion"
+      @delete-question="deleteQuestion"
+    />
   </div>
 </template>
 
@@ -45,7 +43,7 @@ export default {
     editQuestion() {
       this.$router.push(`/admin/question/edit/${this.position}`);
     },
-    async removeQuestion() {
+    async deleteQuestion() {
       const response = await quizApiService.deleteQuestion(this.position);
 
       if (response.status === 204) {

@@ -1,11 +1,22 @@
 <template>
-  <div>
-    <h1>Admin View</h1>
-    <router-link to="/admin/question/create">Créer une question</router-link>
-    <hr>
-    <div>
-      <div v-for="({ title, text },i) in questions" :key="i">
-        <router-link :to="'/admin/question/watch/' + (i + 1)">{{ title }} - {{ text }}</router-link>
+  <div class="d-flex justify-content-center">
+    <div class="card mx-3" style="width: 40rem;">
+      <div class="card-body">
+        <h2 class="card-title">Toutes les questions... 😊</h2>
+      </div>
+
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item" v-for="({ title, text },i) in questions" :key="i" @click="onQuestionClicked(i)">
+          {{ title }} - {{ text }}
+        </li>
+      </ul>
+
+      <div class="card-body d-flex justify-content-center">
+        <router-link to="/admin/question/create">
+          <button class="btn btn-primary">
+            Créer une question
+          </button>
+        </router-link>
       </div>
     </div>
   </div>
@@ -29,6 +40,11 @@ export default {
   data() {
     return {
       questions: []
+    }
+  },
+  methods: {
+    onQuestionClicked(i) {
+      this.$router.push("/admin/question/watch/" + (i + 1));
     }
   }
 }

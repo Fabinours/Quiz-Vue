@@ -1,27 +1,33 @@
 <template>
-  <div>
-    <h1>Edit Question View</h1>
-    <div id="create-question-form">
+  <div class="d-flex justify-content-center">
+    <div class="card mx-3" style="width: 30rem;">
+      <div class="card-body mt-2">
+        <h2 class="card-title">Editer une question ✨</h2>
+        <div id="edit-question-form">
+          <label for="title" class="pt-3">Saisissez le titre</label>
+          <input id="title" class="form-control mt-2" type="text" placeholder="Titre" v-model="title" />
 
-      <p>Saisissez le titre de la question</p>
-      <input type="text" placeholder="Titre" v-model="title" />
+          <label for="text" class="pt-3">Saisissez le texte</label>
+          <input id="text" class="form-control mt-2" type="text" placeholder="Texte" v-model="text" />
 
-      <p>Saisissez le texte de la question</p>
-      <input type="text" placeholder="Texte" v-model="text" />
+          <label class="pt-3">Saisissez les réponses</label>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item"  v-for="(answer, i) in possibleAnswers" :key="i">
+              <div class="d-flex">
+                <input type="radio" :value="i" v-model="correctAnswer" />
+                <input class="form-control mx-2" type="text" placeholder="Réponse" v-model="possibleAnswers[i]" />
+                <button class="btn btn-danger" @click="removeAnswer(i)">Supprimer</button>
+              </div>
+            </li>
+          </ul>
 
-      <p>Saisissez les réponses de la question</p>
-
-      <div v-for="(answer, i) in possibleAnswers" :key="i">
-        <input type="text" placeholder="Réponse" v-model="possibleAnswers[i]" />
-        <input type="radio" :value="i" v-model="correctAnswer" />
-        <button @click="removeAnswer(i)">Supprimer</button>
+        </div>
       </div>
-
-      <button @click="addAnswer()">Ajouter</button>
-
+      <div class="card-body d-flex justify-content-around">
+        <button class="btn btn-primary" @click="updateQuestion">Mettre à jour</button>
+        <button class="btn btn-danger" @click="cancelUpdate">Annuler</button>
+      </div>
     </div>
-    <button class="btn btn-primary" @click="updateQuestion">Mettre à jour la question</button>
-    <button class="btn btn-danger" @click="cancelUpdate">Annuler</button>
   </div>
 </template>
 
@@ -89,7 +95,7 @@ export default {
         return false;
       }
       
-      // Try create question
+      // Try update question
       const response = await quizApiService.updateQuestion(this.$route.params.position, {
         position: this.position,
         title: this.title,
@@ -102,16 +108,16 @@ export default {
       });
 
       if (response.status == 200) {
-        // Question created
+        // Question updated
         await this.$swal.fire(
-          'Question crée !',
-          'Ajout réalisé avec succès',
+          'Question éditée !',
+          'Edition réalisé avec succès',
           'success'
         );
         this.$router.push('/admin');
         return true;
       } else {
-        // Question not created
+        // Question not updated
         this.$swal.fire(
           'Un problème est survenu',
           'Veuillez réessayer plus tard',
