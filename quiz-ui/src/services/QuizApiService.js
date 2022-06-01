@@ -1,4 +1,5 @@
 import axios from "axios";
+import router from '../router'
 import ParticipationStorageService from "./ParticipationStorageService";
 
 const instance = axios.create({
@@ -7,12 +8,13 @@ const instance = axios.create({
 });
 
 export default {
+  // Appel à l'API et vérification du token
   async call(method, resource, data = null) {
     var headers = {
       "Content-Type": "application/json",
     };
     const token = ParticipationStorageService.getToken();
-    
+
     if (token != null) {
       headers.authorization = "Bearer " + token;
     }
@@ -27,7 +29,8 @@ export default {
         return { status: response.status, data: response.data };
       })
       .catch((error) => {
-        console.error(error);
+        ParticipationStorageService.setError("Une erreur est survenue lors de la connexion au serveur");
+        router.push('/error');
         return { status: error.response.status, data: error.response.statusText };
       });
   },

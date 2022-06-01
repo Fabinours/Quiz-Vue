@@ -1,6 +1,6 @@
 <template>
   <div>
-    <AppHeader/>
+    <AppHeader :key="$route.fullPath"/>
     <div class="mx-2 my-5">
       <router-view/>
     </div>

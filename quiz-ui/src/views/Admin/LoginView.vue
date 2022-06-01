@@ -9,7 +9,7 @@
         </div>
       </div>
       <div class="card-body d-flex justify-content-center">
-        <RouterLink to="/questions">
+        <RouterLink to="/login">
           <button class="btn btn-primary" @click="tryLogin">
             Se connecter
           </button>

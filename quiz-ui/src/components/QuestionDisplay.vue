@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex justify-content-center flex-wrap">
-    <div v-if="!isAdmin && question.image" :src="question.image" class="card mx-3" style="width: 30rem;">
-      <img class="fill-tag"/>
+    <div class="card mx-3" style="width: 30rem;">
+      <img v-if="question.image" :src="question.image" class="fill-tag"/>
     </div>
 
     <div class="card mx-3" style="width: 30rem;" v-if="question">
@@ -13,7 +13,7 @@
 
       <ul class="list-group list-group-flush">
         <li 
-          class="list-group-item" 
+          class="list-group-item list-group-item-action" 
           v-for="({ text, isCorrect }, answerId) in question.possibleAnswers" 
           :key="answerId"
           @click="onPossibleAnswerClicked(answerId)" :class="isCorrect && isAdmin ? 'text-decoration-underline' : ''"

@@ -23,7 +23,7 @@ export default {
     }
 
     const position = this.$route.params.position;
-    this.position = 1;
+    this.position = position;
 
     const response = await quizApiService.getQuestion(position);
     this.question = response.data;

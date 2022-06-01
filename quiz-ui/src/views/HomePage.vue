@@ -34,6 +34,7 @@
 
 <script>
 import quizApiService from "@/services/quizApiService";
+//import participationStorageService from "@/services/ParticipationStorageService";
 
 export default {
   name: "HomePage",

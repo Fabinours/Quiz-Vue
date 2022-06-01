@@ -21,6 +21,8 @@
             </li>
           </ul>
 
+          <label class="pt-3">Saisissez l'image</label>
+          <input type="file" class="form-control mt-2" accept="image/*" @change="processFile($event)">
         </div>
       </div>
       <div class="card-body d-flex justify-content-around">
@@ -49,6 +51,7 @@ export default {
     if (response.status == 200) {
       this.title = response.data.title;
       this.text = response.data.text;
+      this.image = response.data.image;
       this.possibleAnswers = response.data.possibleAnswers.map(({ text }) => text);
       this.correctAnswer = response.data.possibleAnswers.findIndex(({ isCorrect }) => isCorrect);
     }
@@ -60,6 +63,7 @@ export default {
       position: 0,
       title: "",
       text: "",
+      image: "",
       possibleAnswers: ["", ""],
       correctAnswer: 0
     }
@@ -94,13 +98,13 @@ export default {
         )
         return false;
       }
-      
+
       // Try update question
       const response = await quizApiService.updateQuestion(this.$route.params.position, {
         position: this.position,
         title: this.title,
         text: this.text,
-        image: "",
+        image: this.image,
         possibleAnswers: this.possibleAnswers.map((answer, i) => ({
           text: answer,
           isCorrect: this.correctAnswer === i
@@ -140,6 +144,18 @@ export default {
     },
     cancelUpdate() {
       this.$router.push('/admin/question/watch/' + this.position);
+    },
+    async processFile(event) {
+      const file = event.target.files[0];
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+          this.image = reader.result;
+          resolve(reader.result);
+        }
+        reader.onerror = error => reject(error);
+      });
     }
   }
 }

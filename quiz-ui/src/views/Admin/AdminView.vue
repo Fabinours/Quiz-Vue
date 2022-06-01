@@ -6,7 +6,7 @@
       </div>
 
       <ul class="list-group list-group-flush">
-        <li class="list-group-item" v-for="({ title, text },i) in questions" :key="i" @click="onQuestionClicked(i)">
+        <li class="list-group-item list-group-item-action" v-for="({ title, text },i) in questions" :key="i" @click="onQuestionClicked(i)">
           {{ title }} - {{ text }}
         </li>
       </ul>

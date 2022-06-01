@@ -17,11 +17,11 @@
         <div class="collapse navbar-collapse px-3" id="navbarExample01">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li 
-              v-for="({ name, path, requireLogged }, i) in links"
+              v-for="({ name, path, requireLogged, requireUnlogged }, i) in links"
               :key="i"
               class="nav-item"
             >
-              <RouterLink class="nav-link" :to="path" v-if="(!requireLogged) || (requireLogged && logged)">
+              <RouterLink class="nav-link" :to="path" v-if="((!logged && !requireLogged) || (logged && !requireUnlogged))">
                 {{ name }}
               </RouterLink>
             </li>
@@ -45,23 +45,27 @@ export default {
         {
           name: "Home",
           path: "/",
-          requireLogged: false
+          requireLogged: false,
+          requireUnlogged: false
         },
         {
           name: "About",
           path: "/about",
-          requireLogged: false
+          requireLogged: false,
+          requireUnlogged: false
         },
         {
           name: "Login",
           path: "/login",
-          requireLogged: false
+          requireLogged: false,
+          requireUnlogged: true
         },
         {
           name: "Admin",
           path: "/admin",
           auth: true,
-          requireLogged: true
+          requireLogged: true,
+          requireUnlogged: false
         }
       ]
     };

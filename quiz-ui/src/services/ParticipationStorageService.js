@@ -2,6 +2,7 @@
 const PLAYER_NAME_KEY = 'playerName';
 const PLAYER_SCORE_KEY = 'playerScore';
 const TOKEN_KEY = 'token';
+const ERROR_KEY = 'error';
 
 export default {
   clear() {
@@ -29,4 +30,11 @@ export default {
     let token = window.localStorage.getItem(TOKEN_KEY);
     return token ? token : null;
   },
+  getError() {
+    let error = window.localStorage.getItem(ERROR_KEY);
+    return error ? error : null;
+  },
+  setError(error) {
+    window.localStorage.setItem(ERROR_KEY, error);
+  }
 };

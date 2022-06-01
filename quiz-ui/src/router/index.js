@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomePage from '../views/HomePage.vue'
+import NotFoundPage from '../components/NotFoundPage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -53,7 +54,13 @@ const router = createRouter({
       path: '/admin/question/edit/:position',
       name: 'admin-question-edit',
       component: () => import('../views/Admin/EditQuestionView.vue')
-    }
+    },
+    {
+      path: '/error',
+      name: 'error',
+      component: () => import('../views/ErrorView.vue')
+    },
+    { path: '/:pathMatch(.*)*', component: NotFoundPage }
   ]
 })
 

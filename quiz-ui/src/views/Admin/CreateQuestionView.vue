@@ -21,6 +21,9 @@
             </li>
           </ul>
 
+          <label class="pt-3">Saisissez l'image</label>
+          <input type="file" class="form-control mt-2" accept="image/*" @change="processFile($event)">
+
         </div>
       </div>
       <div class="card-body d-flex justify-content-around">
@@ -48,6 +51,7 @@ export default {
     return {
       title: "", 
       text: "",
+      image: "",
       possibleAnswers: ["", ""],
       correctAnswer: 0
     }
@@ -88,7 +92,7 @@ export default {
         position: 1,
         title: this.title,
         text: this.text,
-        image: "",
+        image: this.image,
         possibleAnswers: this.possibleAnswers.map((answer, i) => ({
           text: answer,
           isCorrect: this.correctAnswer === i
@@ -128,6 +132,18 @@ export default {
     },
     cancelUpdate() {
       this.$router.push('/admin');
+    },
+    async processFile(event) {
+      const file = event.target.files[0];
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+          this.image = reader.result;
+          resolve(reader.result);
+        }
+        reader.onerror = error => reject(error);
+      });
     }
   }
 }
