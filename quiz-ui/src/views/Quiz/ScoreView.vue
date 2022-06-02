@@ -46,6 +46,7 @@ export default {
     const currentScore = participationStorageService.getParticipationScore()
     const currentPlayerName = participationStorageService.getPlayerName()
 
+    //Récupération des scores de la bdd & Calcul du classement
     const response = await quizApiService.getQuizInfo();
     const index = response.data.scores.findIndex(({ playerName, score}) => playerName === currentPlayerName && score == currentScore);
     const minIndex = Math.max(0, index - this.nearToUserRegisteredScoresRange);

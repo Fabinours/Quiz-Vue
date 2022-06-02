@@ -29,7 +29,7 @@ class QuestionEntity():
         :return: question id
         """
 
-        if not(self.position in self.__getPossiblePositions(db)):
+        if not(int(self.position) in self.__getPossiblePositions(db)):
             return None
 
         try:
@@ -78,13 +78,13 @@ class QuestionEntity():
         interval = self.__getPossiblePositions(db)
         interval[-1] -= 1
 
-        if not(self.position in interval):
+        if not(int(self.position) in interval):
             print("Position not in interval")
             return False
 
         question = QuestionEntity.getByPosition(db, position)
         initialPosition = question.position
-        finalPosition = self.position
+        finalPosition = int(self.position)
 
         # try:
 

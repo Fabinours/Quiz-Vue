@@ -71,6 +71,7 @@ export default {
     };
   },
   computed: {
+    // Vérification de l'état de la connexion pour gérer l'affichage dynamique du header
     logged() {
       return participationStorageService.getToken() != null
     },
@@ -83,7 +84,7 @@ export default {
         'success'
       );
       participationStorageService.removeToken();
-      this.$router.push("/");
+      this.$router.push("/login");
     }
   }
 }

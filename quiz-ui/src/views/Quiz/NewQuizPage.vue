@@ -31,6 +31,7 @@ export default {
   },
   methods: {
     launchNewQuiz() {
+      //Enregistrement du pseudo du participant et place au jeu
       participationStorageService.savePlayerName(this.username);
       this.$router.push('/questions');
     }

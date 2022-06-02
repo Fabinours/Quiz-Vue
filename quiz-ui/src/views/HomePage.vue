@@ -45,6 +45,7 @@ export default {
     }
   },
   async created() {
+    //Meilleurs scores
     const response = await quizApiService.getQuizInfo();
     this.registeredScores = response.data.scores.slice(0, this.registeredScoresSize);
   },

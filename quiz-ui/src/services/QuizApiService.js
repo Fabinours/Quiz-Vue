@@ -34,6 +34,8 @@ export default {
         return { status: error.response.status, data: error.response.statusText };
       });
   },
+
+  // Fonctions d'appel à l'API
   getQuizInfo() {
     return this.call("get", "quiz-info");
   },

@@ -30,10 +30,13 @@ export default {
   name: "AdminView",
   components: {},
   async created() {
+    //Vérification du token administrateur
     if (!participationStorageService.getToken()) {
+      //Sinon redirection vers la page de connexion
       this.$router.push("/login");
     }
 
+    //Récupération des questions
     const response = await quizApiService.getAllQuestions();
     this.questions = response.data.questions;
   },

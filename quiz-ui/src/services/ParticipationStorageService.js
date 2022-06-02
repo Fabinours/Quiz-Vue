@@ -4,6 +4,7 @@ const PLAYER_SCORE_KEY = 'playerScore';
 const TOKEN_KEY = 'token';
 const ERROR_KEY = 'error';
 
+// Enregistrement de certaines variables dans le localStorage
 export default {
   clear() {
     window.localStorage.clear();

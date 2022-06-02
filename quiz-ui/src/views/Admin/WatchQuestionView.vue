@@ -18,13 +18,17 @@ export default {
   name: "WatchQuestionView",
   components: { QuestionDisplay },
   async created() {
+    //Vérification du token administrateur
     if (!participationStorageService.getToken()) {
+      //Sinon redirection vers la page de connexion
       this.$router.push("/login");
     }
 
+    //Récupération de la position de la question
     const position = this.$route.params.position;
     this.position = position;
 
+    //Récupération des données de la question
     const response = await quizApiService.getQuestion(position);
     this.question = response.data;
   },

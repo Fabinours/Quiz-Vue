@@ -23,6 +23,9 @@
 
           <label class="pt-3">Saisissez l'image</label>
           <input type="file" class="form-control mt-2" accept="image/*" @change="processFile($event)">
+
+          <label for="text" class="pt-3">Saisissez la position de la question dans le quiz</label>
+          <input id="position" class="form-control mt-2" type="text" placeholder="Position" v-model="position" />
         </div>
       </div>
       <div class="card-body d-flex justify-content-around">
@@ -41,13 +44,17 @@ export default {
   name: "UpdateQuestionView",
   components: {},
   async created() {
+    //Vérification du token administrateur
     if (!participationStorageService.getToken()) {
+      //Sinon redirection vers la page de connexion
       this.$router.push("/login");
     }
 
+    //Récupération de la question à modifier
     const position = this.$route.params.position;
     const response = await quizApiService.getQuestion(position);
 
+    //Autocomplétion des champs avec les données de la bdd
     if (response.status == 200) {
       this.title = response.data.title;
       this.text = response.data.text;
@@ -146,6 +153,7 @@ export default {
       this.$router.push('/admin/question/watch/' + this.position);
     },
     async processFile(event) {
+      // Enregistrement de l'image 
       const file = event.target.files[0];
       return new Promise((resolve, reject) => {
         const reader = new FileReader();

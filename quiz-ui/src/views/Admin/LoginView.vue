@@ -25,6 +25,12 @@ import participationStorageService from "@/services/ParticipationStorageService"
 
 export default {
   name: "LoginPage",
+  async created() {
+    //Redirection vers la page admin si l'utilisateur est déjà connecté en tant qu'admin
+    if (participationStorageService.getToken()) {
+      this.$router.push("/admin");
+    }
+  },
   data() {
     return {
       password: ""
@@ -51,6 +57,7 @@ export default {
           'success'
         )
 
+        //Enregistrement du token et redirection vers la page admin
         participationStorageService.saveToken(response.data.token);
         this.$router.push('/admin');
       }

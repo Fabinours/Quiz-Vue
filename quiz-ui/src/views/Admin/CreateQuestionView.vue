@@ -24,6 +24,9 @@
           <label class="pt-3">Saisissez l'image</label>
           <input type="file" class="form-control mt-2" accept="image/*" @change="processFile($event)">
 
+          <label for="text" class="pt-3">Saisissez la position de la question dans le quiz</label>
+          <input id="position" class="form-control mt-2" type="text" placeholder="Position" v-model="position" />
+
         </div>
       </div>
       <div class="card-body d-flex justify-content-around">
@@ -43,15 +46,22 @@ export default {
   name: "CreateQuestionView",
   components: {},
   async created() {
+    //Vérification du token administrateur
     if (!participationStorageService.getToken()) {
+      //Sinon redirection vers la page de connexion
       this.$router.push("/login");
     }
+
+    //Autocomplétion de la position selon le nombre de questions déjà créées
+    const response = await quizApiService.getAllQuestions();
+    this.position = response.data.questions.length + 1;
   },
   data() {
     return {
       title: "", 
       text: "",
       image: "",
+      position : 1,
       possibleAnswers: ["", ""],
       correctAnswer: 0
     }
@@ -89,7 +99,7 @@ export default {
       
       // Try create question
       const response = await quizApiService.createQuestion({
-        position: 1,
+        position: this.position,
         title: this.title,
         text: this.text,
         image: this.image,
@@ -134,6 +144,7 @@ export default {
       this.$router.push('/admin');
     },
     async processFile(event) {
+      // Enregistrement de l'image
       const file = event.target.files[0];
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
