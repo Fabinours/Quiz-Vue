@@ -5,7 +5,7 @@
         <h2 class="card-title">Se connecter ? 🙌</h2>
         <div id="password-form">
           <label for="username">Saisissez votre mot de passe</label>
-          <input id="username" class="form-control mt-2" type="password" placeholder="Mot de passe" v-model="password" />
+          <input id="username" class="form-control mt-2" type="password" placeholder="Mot de passe" v-model="password" maxlength="50"/>
         </div>
       </div>
       <div class="card-body d-flex justify-content-center">

@@ -1,6 +1,14 @@
 <template>
   <div>
+    <div v-if="!questions || questions.length == 0" class="d-flex justify-content-center">
+      <div class="card mx-3" style="width: 20rem;">
+        <div class="card-body">
+          <h2 class="card-title">Pas de questions pour le moment...</h2>
+        </div>
+      </div>
+    </div>
     <question-display
+      v-else
       :question="questions[index]"
       :isAdmin="false"
       @answer-selected="answerSelected"

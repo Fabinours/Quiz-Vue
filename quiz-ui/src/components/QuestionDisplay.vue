@@ -1,7 +1,7 @@
 <template>
-  <div class="d-flex justify-content-center flex-wrap">
-    <div class="card mx-3" style="width: 30rem;">
-      <img v-if="question.image" :src="question.image" class="fill-tag"/>
+  <div class="d-flex justify-content-center flex-wrap" v-if="question">
+    <div class="card mx-3" style="width: 30rem;" v-if="question.image" >
+      <img :src="question.image" class="fill-tag"/>
     </div>
 
     <div class="card mx-3" style="width: 30rem;" v-if="question">

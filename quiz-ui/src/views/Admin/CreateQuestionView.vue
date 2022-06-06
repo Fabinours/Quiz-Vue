@@ -24,8 +24,11 @@
           <label class="pt-3">Saisissez l'image</label>
           <input type="file" class="form-control mt-2" accept="image/*" @change="processFile($event)">
 
-          <label for="text" class="pt-3">Saisissez la position de la question dans le quiz</label>
-          <input id="position" class="form-control mt-2" type="text" placeholder="Position" v-model="position" />
+          <div v-if="maxPosition != 1">
+            <label for="position" class="pt-3">Saisissez la position de la question dans le quiz</label>
+            <input id="position" name="position" class="form-control-range mt-2" type="range" :min="minPosition" :max="maxPosition" v-model="currentPosition"/>
+            <p>{{ currentPosition }} / {{ maxPosition }} </p>
+          </div>
 
         </div>
       </div>
@@ -54,14 +57,17 @@ export default {
 
     //Autocomplétion de la position selon le nombre de questions déjà créées
     const response = await quizApiService.getAllQuestions();
-    this.position = response.data.questions.length + 1;
+    this.currentPosition = 1;
+    this.maxPosition = response.data.questions.length + 1;
   },
   data() {
     return {
       title: "", 
       text: "",
       image: "",
-      position : 1,
+      minPosition: 1,
+      maxPosition: 1,
+      currentPosition : 1,
       possibleAnswers: ["", ""],
       correctAnswer: 0
     }
@@ -99,7 +105,7 @@ export default {
       
       // Try create question
       const response = await quizApiService.createQuestion({
-        position: this.position,
+        position: this.currentPosition,
         title: this.title,
         text: this.text,
         image: this.image,
@@ -112,7 +118,7 @@ export default {
       if (response.status == 200) {
         // Question created
         await this.$swal.fire(
-          'Question crée !',
+          'Question créée !',
           'Ajout réalisé avec succès',
           'success'
         );

@@ -24,11 +24,15 @@
           <label class="pt-3">Saisissez l'image</label>
           <input type="file" class="form-control mt-2" accept="image/*" @change="processFile($event)">
 
-          <label for="text" class="pt-3">Saisissez la position de la question dans le quiz</label>
-          <input id="position" class="form-control mt-2" type="text" placeholder="Position" v-model="position" />
+          <div v-if="maxPosition != 1">
+            <label for="position" class="pt-3">Saisissez la position de la question dans le quiz</label>
+            <input id="position" name="position" class="form-control-range mt-2" type="range" :min="minPosition" :max="maxPosition" v-model="position"/>
+            <p>{{ position }} / {{ maxPosition }} </p>
+          </div>
         </div>
       </div>
       <div class="card-body d-flex justify-content-around">
+        <button class="btn btn-primary" @click="addAnswer">Ajouter une réponse</button>
         <button class="btn btn-primary" @click="updateQuestion">Mettre à jour</button>
         <button class="btn btn-danger" @click="cancelUpdate">Annuler</button>
       </div>
@@ -64,9 +68,14 @@ export default {
     }
 
     this.position = parseInt(position);
+
+    const response2 = await quizApiService.getAllQuestions();
+    this.maxPosition = response2.data.questions.length;
   },
   data() {
     return {
+      minPosition: 1,
+      maxPosition: 1,
       position: 0,
       title: "",
       text: "",

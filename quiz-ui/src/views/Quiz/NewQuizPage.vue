@@ -5,7 +5,7 @@
         <h2 class="card-title">Votre pseudo ? ✌</h2>
         <div id="name-form">
           <label for="username">Saisissez votre nom</label>
-          <input id="username" class="form-control mt-2" type="text" placeholder="Pseudo" v-model="username" />
+          <input id="username" class="form-control mt-2" type="text" placeholder="Pseudo" v-model="username" maxlength="20"/>
         </div>
       </div>
       <div class="card-body d-flex justify-content-center">

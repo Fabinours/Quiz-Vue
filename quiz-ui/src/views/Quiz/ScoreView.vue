@@ -10,7 +10,7 @@
 
       <ul class="list-group list-group-flush">
         <li class="list-group-item" v-for="({ playerName, score }, i) in nearToUserRegisteredScores" :key="i">
-          {{ nearToUserRegisteredScoresMinPodium + i }}/{{ parcipationNb }} : {{ playerName }} - {{ score }}
+          {{ nearToUserRegisteredScoresMinPodium + i }}/{{ parcipationNb }} : Joueur "{{ playerName }}" - {{ score }} points
         </li>
       </ul>
     </div>
@@ -21,7 +21,7 @@
       </div>
       <ul class="list-group list-group-flush">
         <li class="list-group-item" v-for="({ playerName, score }, i) in registeredScores" :key="i">
-          {{ i + 1 }}/{{ parcipationNb }} : {{ playerName }} avec {{ score }} points !
+          {{ i + 1 }}/{{ parcipationNb }} : Joueur "{{ playerName }}" - {{ score }} points !
         </li>
       </ul>
 
