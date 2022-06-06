@@ -23,8 +23,12 @@
       </ul>
       
       <div v-if="isAdmin" class="card-body d-flex justify-content-around">
-        <button class="btn btn-primary" @click="onEditQuestionClicked">Modifier </button>
-        <button class="btn btn-danger" @click="onDeleteQuestionClicked">Supprimer</button>
+        <div>
+          <button class="btn btn-primary" @click="onEditQuestionClicked">Modifier </button>
+        </div>
+        <div>
+          <button class="btn btn-danger" @click="onDeleteQuestionClicked">Supprimer</button>
+        </div>
       </div>
     </div>
   </div>
@@ -71,11 +75,18 @@ export default {
     }
   },
   data() {
-    return {}
+    return { isAnswered: false}
   },
   emits: ["answer-selected", "edit-question", "delete-question"],
+  updated() {
+    this.isAnswered = false;
+  },
   methods: {
-    onPossibleAnswerClicked(answerId) {
+    async onPossibleAnswerClicked(answerId) {
+
+      if (this.isAnswered) return;
+      this.isAnswered = true;
+
       this.$emit('answer-selected', answerId)
     },
     onEditQuestionClicked() {

@@ -40,6 +40,28 @@ export default {
   },
   methods: {
     async answerSelected(answerId) {
+      //Afichage de la bonne réponse
+
+      const Toast = this.$swal.mixin({
+        toast: true,
+        position: 'top-right',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true
+      })
+
+      if (this.questions[this.index].possibleAnswers[answerId].isCorrect) {
+        await Toast.fire({
+          icon: 'success',
+          title: 'Cette réponse est correcte 😀'
+        })
+      } else {
+        await Toast.fire({
+          icon: 'error',
+          title: 'Cette réponse est incorrecte 😅'
+        })
+      }
+
       //Enregistrement de la réponse
       this.answers.push(answerId + 1)
 
