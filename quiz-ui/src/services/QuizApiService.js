@@ -29,8 +29,11 @@ export default {
         return { status: response.status, data: response.data };
       })
       .catch((error) => {
-        ParticipationStorageService.setError("Une erreur est survenue lors de la connexion au serveur");
-        router.push('/error');
+
+        if (error.response.status === 500) {
+          ParticipationStorageService.setError("Une erreur inatendue est survenue !");
+          router.push('/error');
+        }
         return { status: error.response.status, data: error.response.statusText };
       });
   },
